@@ -1,5 +1,6 @@
 #include "htab.h"
 #include <stdlib.h>
+#include <stdint.h>
 
 struct htab {
     size_t size;
@@ -9,7 +10,7 @@ struct htab {
 
 struct htab_item {
     struct htab_item *next;
-    struct htab_pair;
+    struct htab_pair pair;
 };
 
 size_t htab_hash_function(const char *str)
@@ -37,7 +38,7 @@ htab_t *htab_init(size_t n)
     return new_htab;
 }
 
-size_t htab_size(htab_t *htab)
+size_t htab_size(const htab_t *htab)
 {
 	if (!htab)
 		return 0;
@@ -45,7 +46,7 @@ size_t htab_size(htab_t *htab)
 		return htab->size;
 }
 
-size_t htab_bucket_count(htab_t *htab)
+size_t htab_bucket_count(const htab_t *htab)
 {
 	if (!htab)	
 		return 0;
@@ -53,16 +54,16 @@ size_t htab_bucket_count(htab_t *htab)
 		return htab->arr_size;
 }
 
-htab_pair_t *htab_find(htab_t *t, htab_key_t key)
+htab_pair_t *htab_find(const htab_t *t, htab_key_t key)
 {
 	size_t h = htab_hash_function(key);
 	size_t idx = h % t->arr_size;
-	htab_pair_t *pair = t->arr[idx];
-	while (pair != NULL)
+	struct htab_item *item = t->arr[idx];
+	while (item != NULL)
 	{
-		if (strcmp(pair->key, key) == 0)
-			return pair;
-		pair = pair->next;
+		if (strcmp(item->pair.key, key) == 0)
+			return &item->pair;
+		item = item->next;
 	}
 	return NULL;
 }
@@ -71,65 +72,74 @@ htab_pair_t *htab_lookup_add(htab_t *t, htab_key_t key)
 {	
 	size_t h = htab_hash_function(key);
 	size_t idx = h % t->arr_size;
-	htab_pair_t *pair = t->arr[idx];
-	while (pair != NULL)
+	struct htab_item *item = t->arr[idx];
+	while (item != NULL)
 	{
-		if (strcmp(pair->key, key) == 0)
-			return pair;
-		//early exit loopu, aby byl pair stale jeste dostupny po loopu
-		if (pair->next == NULL)
+		if (strcmp(item->pair.key, key) == 0)
+			return &item->pair;
+		//early exit loopu, aby byl item stale jeste dostupny po loopu
+		if (item->next == NULL)
 			break;
-		pair = pair->next;
+		item = item->next;
 	}
-	new_pair = malloc(sizeof(htab_pair_t));
-	if (new_pair)
+	struct htab_item *new_item = malloc(sizeof(struct htab_item));
+	if (new_item)
 	{
-		htab->size++;
-		new_pair->next = NULL;
-		key_dup = strdup(key);
-		new_pair->key = key_dup;
+		t->size++;
+		new_item->next = NULL;
+	char *key_dup = strdup(key);
+		new_item->pair.key = key_dup;
 	}
-	pair->next = new_pair;
-	return new_pair;
+	item->next = new_item;
+	return &new_item->pair;
 }
 
-static inline void free_pair(htab_pair_t *pair)
+static inline void free_item(struct htab_item *item)
 {
-	if (!pair)
+	if (!item)
 		return;
-	if (pair->key)
-		free(pair->key);
-	free(pair)
+	if (item->pair.key)
+		free((void *)item->pair.key);
+	free(item);
 }
 
 bool htab_erase(htab_t *t, htab_key_t key)
 {
 	size_t h = htab_hash_function(key);
 	size_t idx = h % t->arr_size;
-	htab_pair_t *prev_pair = NULL;
-	htab_pair_t *pair = t->arr[idx];
-	while (pair != NULL)
+	struct htab_item *prev_item = NULL;
+	struct htab_item *item = t->arr[idx];
+	while (item)
 	{
-		if (strcmp(pair->key, key) == 0)
+		if (strcmp(item->pair.key, key) == 0)
 			break;
-		prev_pair = pair;
-		pair = pair->next;
+		prev_item = item;
+		item = item->next;
 	}
-	if (!pair)
+	if (!item)
 		return false;
-	//unlinknuti pairu
-	if (prev_pair)
-		prev_pair->next = pair->next;
-	else
-		t->arr[idx] = pair->next;
-	free_pair(pair);
+	//unlinknuti itemu
+	if (prev_item)
+		prev_item->next = item->next;
+	else //jestlize prev_item == NULL, maze se prvni polozka seznamu
+		t->arr[idx] = item->next;
+	free_item(item);
 	t->size--;
 	return true;
 }
 
-void htab_for_each(htab_t *t, void *func)
+void htab_for_each(const htab_t *t, void (*)(htab_pair_t *))
 {
-	//TODO
+ 	for (size_t i = 0; i < t->arr_size; i++)
+	{
+		struct htab_item *item = t->arr[i];
+		while (item)
+		{
+			//TODO	
+			item = item->next;
+		}
+	}
+
 }
 
 void htab_clear(htab_t *t)
@@ -137,12 +147,12 @@ void htab_clear(htab_t *t)
 	//odstraneni (uvolneni) vsech prvku
 	for (size_t i = 0; i < t->arr_size; i++)
 	{
-		htab_pair *pair = t->arr[i];
-		while (pair)
+		struct htab_item *item = t->arr[i];
+		while (item)
 		{
-			htab_pair_t *next_pair = pair->next;
-			free_pair(pair);
-			pair = next_pair;
+			struct htab_item *next_item = item->next;
+			free_item(item);
+			item = next_item;
 		}
 		t->arr[i] = NULL;
 	}
@@ -152,6 +162,6 @@ void htab_clear(htab_t *t)
 void htab_free(htab_t *t)
 {
 	htab_clear(t);
-	free(t)
+	free(t);
 }
 
