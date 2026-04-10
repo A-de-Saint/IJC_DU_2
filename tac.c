@@ -99,11 +99,12 @@ int read_line(char *buff, size_t buff_size, FILE *file)
     return i;
 }
 
-bool input_to_list(StringList *sl, FILE *file)
+bool input_to_list(StringList *sl, FILE *file, int l)
 {
     char buff[LINE_CHAR_LIMIT + 1];
-    bool no_overflow = true;
+    bool no_overflow = true; //aby byl warning vypsan jen jednou
     int res;
+	int lines_read = 0;
     while ((res = read_line(buff, sizeof(buff), file)) != -1)
     {
         if (res >= (int)sizeof(buff) && no_overflow)
@@ -113,6 +114,9 @@ bool input_to_list(StringList *sl, FILE *file)
         }
         if (!list_ins_first(sl, buff))
             return false;
+		lines_read++;
+		if (l >= 0 && lines_read >= l)
+			break;
     }
     return true;
 }
@@ -120,29 +124,50 @@ bool input_to_list(StringList *sl, FILE *file)
 int main(int argc, char **argv)
 {
     //soubor pro input
-    FILE *input;
-    bool reading_stdin = false;
-    if (argc == 1)
-    {
-        input = stdin;
-        reading_stdin = true;
-    }
-    else if (argc > 1)
-    {
-        input = fopen(argv[1], "r");
-        if (input == 0)
-        {
-            fprintf(stderr, "Could not open '%s'\n", argv[1]);
-            return 1;
-        }
-    }
+    FILE *input = stdin;
+	int l = -1; //inicializovano na -1 (pokud -l neni specifikovano)
+    bool reading_stdin = true;
+    if (argc > 1)
+	{	
+		//cte vsechny argumenty
+		for (int i = 1; i < argc; i++)
+		{
+			//case '-l' 'cislo'
+			if (l < 0 && strcmp(argv[i], "-l") == 0)
+			{
+				i++;
+				if (i >= argc)
+				{
+					fprintf(stderr, "Missing number after -l\n");
+					return 1;
+				}
+				char *conv_check;
+				l = (int)strtoul(argv[i], &conv_check, 10);
+				if (!conv_check || *conv_check != '\0')
+				{
+					fprintf(stderr, "Invalid argument after -l: %s\n", argv[i]);
+					return 1;
+				}
+			}
+			else if (reading_stdin) //case 'filename.suff'
+			{
+				input = fopen(argv[i], "r");
+				if (input == NULL)
+				{
+					fprintf(stderr, "Failed to open %s\n", argv[i]);
+					return 1;
+				}
+				reading_stdin = false;
+			}
+		}
+	}
 
     //inicializace listu
     StringList sl;
     list_init(&sl);
 
     //cteni souboru do listu
-    bool read_res = input_to_list(&sl, input);
+    bool read_res = input_to_list(&sl, input, l);
     if (!read_res)
     {
         list_free(&sl);
