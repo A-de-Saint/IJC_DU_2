@@ -32,7 +32,7 @@ bool list_ins_first(StringList *sl, char *line)
 
     //kopirovani s null termination
     strncpy(node->data, line, LINE_CHAR_LIMIT);
-    node->data[LINE_CHAR_LIMIT] = '\n';
+    node->data[LINE_CHAR_LIMIT] = '\0';
 
     //zarazeni do seznamu
     node->next_node = sl->first;
@@ -90,6 +90,8 @@ int read_line(char *buff, size_t buff_size, FILE *file)
         }
         i++;
     }
+
+	//jestlize byl dosazen EOF a radek je prazdny (\nEOF), konec cteni
     if (ch == EOF && i == 0)
         return -1;
     if (i >= buff_size)
@@ -143,7 +145,9 @@ int main(int argc, char **argv)
 				}
 				char *conv_check;
 				l = (int)strtoul(argv[i], &conv_check, 10);
-				if (!conv_check || *conv_check != '\0')
+
+				//check, jestli se akce povedla a jestli je cislo kladne
+				if (!conv_check || *conv_check != '\0' || l < 1)
 				{
 					fprintf(stderr, "Invalid argument after -l: %s\n", argv[i]);
 					return 1;
