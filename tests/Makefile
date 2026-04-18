@@ -7,6 +7,11 @@ D_LIB = ../dynamic_lib
 
 all: test_s test_d
 
+test: test_s test_d
+	./test_s
+	@printf "\n"
+	LD_LIBRARY_PATH="$(D_LIB)" ./test_d
+
 test_s: htab_test.c
 	$(CC) $(CFLAGS) $< -L$(S_LIB) -lhtab -o $@
 
