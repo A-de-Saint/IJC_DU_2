@@ -1,6 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <type.h> //pro isspace()
+#include <stdio.h> //FILE
+#include <ctype.h> //pro isspace()
 #include "htab.h"
 
 //funkce cte jedno slovo (non-space charaktery oddelene space charaktery)
