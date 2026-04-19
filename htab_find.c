@@ -1,3 +1,9 @@
+// htab_find.c
+// Řešení příkladu IJC-DU2, příklad b), 17.4.2026
+// Autor: Antonín Hrnčíř, FIT
+// Přeloženo: gcc 15.2.1
+// Implementace funkce htab_find pro libhtab
+
 #include "htab_internal.h"
 
 htab_pair_t *htab_find(const htab_t *t, htab_key_t key)
@@ -11,5 +17,5 @@ htab_pair_t *htab_find(const htab_t *t, htab_key_t key)
 			return &item->pair;
 		item = item->next;
 	}
-	return NULL;
+	return NULL; //pripad, ze se nic nenaslo
 }

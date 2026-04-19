@@ -1,11 +1,8 @@
-//program ze zadani
-
 // maxwordcount-cpp.cc
-// Použijte: g++ -O2
-// Příklad použití STL kontejneru unordered_map<>
-// Program zjistí četnost slov ve vstupním textu,
-// a tiskne seznam nejčetnějších slov.
-// Slovo je cokoli oddělené "bílým znakem"
+// Zadání příkladu IJC-DU2, příklad b), 13.4.2026
+// Autor: Antonín Hrnčíř, FIT
+// Přeloženo: gcc 15.2.1
+// Soubor maxwordcount-cpp.cc ze zadání
 
 #include <string>
 #include <iostream>

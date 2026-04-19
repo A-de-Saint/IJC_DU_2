@@ -1,5 +1,10 @@
+# Autor: Antonín Hrnčíř, FIT
+# Makefile pro IJC-DU2
+
 CC = gcc
 CFLAGS = -g -std=c11 -pedantic -Wall -Wextra
+CPP = g++
+CPPFLAGS = -std=c++17 -pedantic -Wall
 
 OBJ_DIR = obj
 BIN_DIR = bin
@@ -12,7 +17,7 @@ LIB_OBJS = $(patsubst %.c, $(LIB_OBJ)/%.o, $(LIB_SRC))
 
 .PHONY: all clean check
 
-all: $(BIN_DIR)/tac $(BIN_DIR)/maxwordcount $(BIN_DIR)/maxwordcount-dynamic
+all: $(BIN_DIR)/tac $(BIN_DIR)/maxwordcount $(BIN_DIR)/maxwordcount-dynamic $(BIN_DIR)/maxwordcount-cpp
 
 check: all
 	./$(BIN_DIR)/tac tac.c -l 10
@@ -29,6 +34,9 @@ $(BIN_DIR)/maxwordcount: $(OBJ_DIR)/maxwordcount.o $(OBJ_DIR)/io.o $(S_LIB)/libh
 
 $(BIN_DIR)/maxwordcount-dynamic: $(OBJ_DIR)/maxwordcount.o $(OBJ_DIR)/io.o $(D_LIB)/libhtab.so | $(BIN_DIR)
 	$(CC) $(CFLAGS) $(OBJ_DIR)/maxwordcount.o $(OBJ_DIR)/io.o -L$(D_LIB) -lhtab -o $@
+
+$(BIN_DIR)/maxwordcount-cpp: maxwordcount-cpp.cc
+	$(CPP) $(CPPFLAGS) $< -o $@
 
 $(S_LIB)/libhtab.a: $(LIB_OBJS) | $(S_LIB)
 	ar rcs $@ $^

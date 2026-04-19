@@ -1,3 +1,9 @@
+// htab_lookup_add.c
+// Řešení příkladu IJC-DU2, příklad b), 17.4.2026
+// Autor: Antonín Hrnčíř, FIT
+// Přeloženo: gcc 15.2.1
+// Implementace funkce htab_lookup_add pro libhtab a pomocne funkce duplicate string
+
 #include "htab_internal.h"
 
 //dela v podstate to same jako strdup (strdup nefunguje na c11)

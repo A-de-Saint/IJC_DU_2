@@ -1,3 +1,9 @@
+// htab_erase.c
+// Řešení příkladu IJC-DU2, příklad b), 17.4.2026
+// Autor: Antonín Hrnčíř, FIT
+// Přeloženo: gcc 15.2.1
+// Implementace funkce htab_erase pro libhtab
+
 #include "htab_internal.h"
 
 bool htab_erase(htab_t *t, htab_key_t key)

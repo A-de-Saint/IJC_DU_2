@@ -1,3 +1,9 @@
+// tac.c
+// Řešení příkladu IJC-DU2, příklad a), 12.4.2026
+// Autor: Antonín Hrnčíř, FIT
+// Přeloženo: gcc 15.2.1
+// Implementace programu tac, který čte řádky souboru a tiskne je v opačném pořadí
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>

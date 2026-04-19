@@ -1,3 +1,9 @@
+// htab_init.c
+// Řešení příkladu IJC-DU2, příklad b), 17.4.2026
+// Autor: Antonín Hrnčíř, FIT
+// Přeloženo: gcc 15.2.1
+// Implementace funkce htab_init pro libhtab
+
 #include "htab_internal.h"
 
 htab_t *htab_init(size_t n)

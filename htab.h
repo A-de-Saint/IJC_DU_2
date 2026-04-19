@@ -1,3 +1,9 @@
+// htab.h
+// Řešení příkladu IJC-DU2, příklad b), 17.4.2026
+// Autor: Antonín Hrnčíř, FIT
+// Přeloženo: gcc 15.2.1
+// Veřejné rozhraní pro libhtab (zkopírováno ze zadání)
+
 // htab.h -- rozhraní knihovny htab (řešení IJC-DU2)
 // Licence: žádná (Public domain)
 

@@ -1,3 +1,9 @@
+// io.c
+// Řešení příkladu IJC-DU2, příklad b), 18.4.2026
+// Autor: Antonín Hrnčíř, FIT
+// Přeloženo: gcc 15.2.1
+// Implementace funkce read_word v modulu io.c
+
 #include <stdio.h> //FILE
 #include <ctype.h> //pro isspace()
 #include "htab.h"
