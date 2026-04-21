@@ -50,14 +50,14 @@ void print_max(htab_pair_t *data)
 int main()
 {
 	/*
-		Číslo 131072 jsem zvolil proto, že na Merlinovi je
+		Číslo 120011 jsem zvolil proto, že na Merlinovi je
 		počet slov v /usr/share/dict/words 104334
 		(zjištěno pomocí 'wc -l /usr/share/dict/words') a
-		131072 je mocnina dvou, která nechává nějakou rezervu i pro
+		120011 je prvočíslo, které nechává nějakou rezervu i pro
 		systémy s vyšším počtem unikátních slov v daném slovníku
 		a udržuje load factor hashovací tabulky na hodnotě ~1
 	*/
-	htab_t *m = htab_init(131072);
+	htab_t *m = htab_init(120011);
 
 	char word[WORD_CHAR_LIMIT + 1];
 	int res;
