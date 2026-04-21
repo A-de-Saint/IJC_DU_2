@@ -6,7 +6,7 @@
 
 #include "htab_internal.h"
 
-//dela v podstate to same jako strdup (strdup nefunguje na c11)
+//dela v podstate to same jako strdup (strdup nefunguje na C11 na mem zarizeni)
 char *duplicate_string(const char *string)
 {
 	char *dup = malloc(strlen(string) + 1);
@@ -22,6 +22,7 @@ htab_pair_t *htab_lookup_add(htab_t *t, htab_key_t key)
 	struct htab_item *item = t->arr[idx];
 	while (item != NULL)
 	{
+		//pripad nalezeni klice
 		if (strcmp(item->pair.key, key) == 0)
 		{
 			item->pair.value++;
@@ -32,6 +33,8 @@ htab_pair_t *htab_lookup_add(htab_t *t, htab_key_t key)
 			break;
 		item = item->next;
 	}
+
+	//nebyl nalezen klic, je treba pridat item
 	struct htab_item *new_item = malloc(sizeof(struct htab_item));
 	if (new_item)
 	{
@@ -46,9 +49,9 @@ htab_pair_t *htab_lookup_add(htab_t *t, htab_key_t key)
 		new_item->pair.key = key_dup;
 		new_item->pair.value = 1;
 	}
-	else
+	else //pokazena alokace
 		return NULL;
-	if (item)
+	if (item) //pripad, kdy neni polozka prvni v seznamu
 		item->next = new_item;
 	else 
 		t->arr[idx] = new_item;

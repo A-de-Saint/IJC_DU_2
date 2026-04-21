@@ -21,9 +21,11 @@ all: $(BIN_DIR)/tac $(BIN_DIR)/maxwordcount $(BIN_DIR)/maxwordcount-dynamic $(BI
 
 check: all
 	./$(BIN_DIR)/tac tac.c -l 10
-	@printf "\n"
+	@printf "\n%s\n" "CPP reference output:"
+	(cat /usr/share/dict/words; echo yes no error) | ./$(BIN_DIR)/maxwordcount-cpp
+	@printf "\n%s\n" "C static output:"
 	(cat /usr/share/dict/words; echo yes no error) | ./$(BIN_DIR)/maxwordcount
-	@printf "\n"
+	@printf "\n%s\n" "C dynamic output:"
 	(cat /usr/share/dict/words; echo yes no error) | (LD_LIBRARY_PATH="$(D_LIB)/" ./$(BIN_DIR)/maxwordcount-dynamic)
 
 $(BIN_DIR)/tac: tac.c | $(BIN_DIR)

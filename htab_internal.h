@@ -12,12 +12,14 @@
 
 /* DEKLARACE ENCAPSULATED STRUKTUR */
 
+//struktura htab
 struct htab {
     size_t size;
     size_t arr_size;
     struct htab_item *arr[];
 };
 
+//struktura htab_item
 struct htab_item {
     struct htab_item *next;
     struct htab_pair pair;

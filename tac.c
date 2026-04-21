@@ -11,11 +11,13 @@
 
 #define LINE_CHAR_LIMIT 1024
 
+//struktura jednoho uzlu v listu
 typedef struct sl_node_t {
     char data[LINE_CHAR_LIMIT + 1];
     struct sl_node_t *next_node;
 } SL_Node;
 
+//struktura listu
 typedef struct {
     SL_Node *first;
 } StringList;
@@ -25,6 +27,7 @@ void list_init(StringList *sl)
     sl->first = NULL;
 }
 
+//funkce pridava prvek na zacatek listu
 bool list_ins_first(StringList *sl, char *line)
 {
     SL_Node *node = malloc(sizeof(SL_Node));
@@ -47,6 +50,7 @@ bool list_ins_first(StringList *sl, char *line)
     return true;
 }
 
+//funkce vypisujici cely list
 void list_print(StringList *sl)
 {
     SL_Node *node = sl->first;
@@ -57,6 +61,7 @@ void list_print(StringList *sl)
     }
 }
 
+//funkce pocitajici prvky v listu
 size_t list_size(StringList *sl)
 {
     size_t size = 0;
@@ -69,6 +74,7 @@ size_t list_size(StringList *sl)
     return size;
 }
 
+//funkce uvolnujici cely list
 void list_free(StringList *sl)
 {
     SL_Node *node = sl->first;
@@ -80,7 +86,7 @@ void list_free(StringList *sl)
     }
 }
 
-//precte jeden radek z file, terminuje '\'
+//precte jeden radek z file, terminuje '\0'
 //vraci -1 v pripade chyby ci EOF, jinak pocet charakteru na radku
 int read_line(char *buff, size_t buff_size, FILE *file)
 {
@@ -89,7 +95,7 @@ int read_line(char *buff, size_t buff_size, FILE *file)
     while ((ch = fgetc(file)) != '\n')
     {
         if (ch == EOF)
-            break;
+            break; //zatim nevracet -1, je treba kontrola delky
         if (i < buff_size - 1)
         {
             buff[i] = ch;
@@ -97,9 +103,11 @@ int read_line(char *buff, size_t buff_size, FILE *file)
         i++;
     }
 
-	//jestlize byl dosazen EOF a radek je prazdny (\nEOF), konec cteni
+	//jestlize byl dosazen EOF a radek je prazdny (pripad "\nEOF"), konec cteni
     if (ch == EOF && i == 0)
         return -1;
+
+    //terminace '\0'
     if (i >= buff_size)
         buff[buff_size - 1] = '\0';
     else 
@@ -107,6 +115,7 @@ int read_line(char *buff, size_t buff_size, FILE *file)
     return i;
 }
 
+//funkce, ktera cte soubor a prevadi jej do listu
 bool input_to_list(StringList *sl, FILE *file, int l)
 {
     char buff[LINE_CHAR_LIMIT + 1];

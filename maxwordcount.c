@@ -27,16 +27,20 @@ size_t htab_hash_function(const char *str)
 
 #endif
 
+//deklarace funkce z io.c
 int read_word(unsigned max, char s[max], FILE *f);
 
+//globalni promenna merici maximum (knihovna neumoznuje predavani kontextu do htab_for_each)
 static unsigned max = 0;
 
+//funkce pro nalezeni maxima (pro htab_for_each)
 void find_max(htab_pair_t *data)
 {
 	if (data->value > max)
 		max = data->value;
 }
 
+//fuknce pro vypsani maximalnich prvku (pro htab_for_each)
 void print_max(htab_pair_t *data)
 {
 	if (data->value == max)
@@ -62,11 +66,13 @@ int main()
 	{
 		if ((size_t)res >= sizeof(word) && !warned_already)
 		{
-			fprintf(stderr, "Warning: Word(s) longer than %zu found and will be trimmed\n", sizeof(word));
+			fprintf(stderr, "Warning: Word(s) longer than %zu found and will be trimmed\n", sizeof(word) - 1);
 			warned_already = true;
 		}
 
 		htab_pair_t *pair = htab_lookup_add(m, word);
+
+		//jestlize operace selhala, varujeme uzivatele, ale neukoncujeme beh programu
 		if (!pair)
 		{
 			fprintf(stderr, "Failed to add '%s' to the hash table\n", word);
